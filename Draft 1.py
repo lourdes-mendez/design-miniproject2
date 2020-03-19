@@ -3,7 +3,7 @@ population = np.array([8601186, 4057841, 2679044, 2359480, 1711356, 1576596, 156
 demand = np.zeros((15,15))
 for i in range(14):
     for j in range(14):
-        if population[i] < population[j]:
+        if i < j:
             demand[i,j] = demand[i,j] + [.1 * [population(i) * population(j)]**.25]
             j += 1
         else:
