@@ -15,6 +15,7 @@ def initDistances():
     return(dists)
 
 def initEdges():
+    counter = 0
     df = pd.read_csv(r'Edges.csv')
     dists = np.zeros((14, 14))
     for i in range(14):
@@ -22,7 +23,18 @@ def initEdges():
             if j < i:
                 dists[i][j] = df.iloc[i, j]
                 dists[j][i] = df.iloc[i, j]
-    return (dists)
+                counter = counter + 1
+    return (dists, counter)
+
+def initDemand():
+    df = pd.read_csv(r'Demand.csv')
+    dists = np.zeros((14, 14))
+    for i in range(14):
+        for j in range(14):
+            if j < i:
+                dists[i][j] = df.iloc[i, j]
+                dists[j][i] = df.iloc[i, j]
+    return(dists)
 
 def visualizeGraph(graphHere): #saves picture of graph to the directory the code is in (does not show edge weights atm)
     pos = nx.spring_layout(graphHere) #positions nodes for aesthetic
@@ -44,7 +56,7 @@ def visualizeGraph(graphHere): #saves picture of graph to the directory the code
 # print(dict(allShortestPaths)[source][0][to])
 
 def checkDistances(allpairsdjik, dists): #check every pair of nodes for violation, return list of violations of nodes
-    x = dict(allpairsdjik)
+    x = allpairsdjik
     for i in range(14):
         for j in range(14):
             if(j != i):
@@ -53,23 +65,20 @@ def checkDistances(allpairsdjik, dists): #check every pair of nodes for violatio
                     print("delay constraint violated at:",i,"to",j)
     return
 
-def getCost(g, allpairsdjik,k): #calculate the total cost using the demands and fixed costs, returns a value
+def getCost(g, allpairsdjik,fixedCost,demand): #calculate the total cost using the demands and fixed costs, returns a value
+    print(allpairsdjik[1][1][3])
     #also print the three highest costing arcs
+
     return
 
-def displayResults(cost,distanceViolations,g):
+def displayResults(cost,g):
     print("cost of graph in test.png:",cost)
-    if distanceViolations is None:
-        print("no distance violations")
-    else:
-        # for loop going through violations and printing one by one
-        print("these are the violations")
 
     visualizeGraph(g)
     return
 
 #goal: given array representation of a graph, display total cost and distance constraints violated
-def checkGraph(arrayGraph,edgeWeights,k): #edgeWeights is the distance array, shouldnt be a parameter cause its the same for every run
+def checkGraph(arrayGraph,edgeWeights,demand,fixedCosts): #edgeWeights is the distance array, shouldnt be a parameter cause its the same for every run
     g = nx.Graph()
     g.add_nodes_from(range(0, len(arrayGraph)))  # adds number of nodes
     # adds edges to graph
@@ -78,20 +87,25 @@ def checkGraph(arrayGraph,edgeWeights,k): #edgeWeights is the distance array, sh
             if not arrayGraph[x][y] == 0:
                 g.add_edge(x, y, weight=edgeWeights[x][y])
     shortestPaths = nx.all_pairs_dijkstra(g)
-    cost = getCost(g,shortestPaths,k)
+    shortestPaths = dict(shortestPaths)
+    cost = getCost(g,shortestPaths,fixedCosts,demand)
     checkDistances(shortestPaths,edgeWeights) #will print out errors
-    displayResults(cost,distanceViolations,g)
+    displayResults(cost,g)
 
 
 #main
-
-distances = initDistances()
-edges = initEdges()
-#note: may have to add row of 13 , before the first row to make it accept
-print(edges)
 k = 0
 
-checkGraph(edges,distances,k)
+distances = initDistances()
+edges, numOfEdges = initEdges()
+demand = initDemand()
+#note: may have to add row of 13 , before the first row to make it accept
+print(edges)
+
+
+fixedCosts = numOfEdges * k
+
+checkGraph(edges,distances,demand,fixedCosts)
 
 #how to use what is returned
 #ref: https://networkx.github.io/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra.html#networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra
