@@ -53,7 +53,8 @@ def checkDistances(allpairsdjik, dists): #check every pair of nodes for violatio
                     print("delay constraint violated at:",i,"to",j)
     return
 
-def getCost(g, allpairsdjik): #calculate the total cost using the demands and fixed costs, returns a value
+def getCost(g, allpairsdjik,k): #calculate the total cost using the demands and fixed costs, returns a value
+    #also print the three highest costing arcs
     return
 
 def displayResults(cost,distanceViolations,g):
@@ -68,7 +69,7 @@ def displayResults(cost,distanceViolations,g):
     return
 
 #goal: given array representation of a graph, display total cost and distance constraints violated
-def checkGraph(arrayGraph,edgeWeights): #edgeWeights is the distance array, shouldnt be a parameter cause its the same for every run
+def checkGraph(arrayGraph,edgeWeights,k): #edgeWeights is the distance array, shouldnt be a parameter cause its the same for every run
     g = nx.Graph()
     g.add_nodes_from(range(0, len(arrayGraph)))  # adds number of nodes
     # adds edges to graph
@@ -77,7 +78,7 @@ def checkGraph(arrayGraph,edgeWeights): #edgeWeights is the distance array, shou
             if not arrayGraph[x][y] == 0:
                 g.add_edge(x, y, weight=edgeWeights[x][y])
     shortestPaths = nx.all_pairs_dijkstra(g)
-    cost = getCost(g,shortestPaths)
+    cost = getCost(g,shortestPaths,k)
     checkDistances(shortestPaths,edgeWeights) #will print out errors
     displayResults(cost,distanceViolations,g)
 
@@ -88,9 +89,9 @@ distances = initDistances()
 edges = initEdges()
 #note: may have to add row of 13 , before the first row to make it accept
 print(edges)
+k = 0
 
-
-checkGraph(edges,distances)
+checkGraph(edges,distances,k)
 
 #how to use what is returned
 #ref: https://networkx.github.io/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra.html#networkx.algorithms.shortest_paths.weighted.all_pairs_dijkstra
