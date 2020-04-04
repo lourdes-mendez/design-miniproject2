@@ -33,7 +33,6 @@ def initDemand():
         for j in range(14):
             if j < i:
                 dists[i][j] = df.iloc[i, j]
-                dists[j][i] = df.iloc[i, j]
     return(dists)
 
 def visualizeGraph(graphHere): #saves picture of graph to the directory the code is in (does not show edge weights atm)
@@ -101,7 +100,6 @@ edges, numOfEdges = initEdges()
 demand = initDemand()
 #note: may have to add row of 13 , before the first row to make it accept
 print(edges)
-
 
 fixedCosts = numOfEdges * k
 
