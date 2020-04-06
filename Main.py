@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 #pip install _
 
+def putToCsv(arr,filename):
+    # a = numpy.asarray([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    fn = filename + '.csv'
+    np.savetxt(fn, arr, delimiter=",",fmt='%f')
+
 def initDistances():
     df = pd.read_csv(r'Distances.csv')
     dists = np.zeros((14, 14))
@@ -56,13 +61,17 @@ def visualizeGraph(graphHere): #saves picture of graph to the directory the code
 
 def checkDistances(allpairsdjik, dists): #check every pair of nodes for violation, return list of violations of nodes
     x = allpairsdjik
+    distMatrix = np.zeros((14,14))
     for i in range(14):
         for j in range(14):
-            if(j != i):
+            if(j != i and j<i):
                 distTravelled = x[i][0][j]
+                distMatrix[i][j] = distTravelled
                 if distTravelled > (dists[i][j] * 4/3):
                     print("delay constraint violated at:",i,"to",j)
     print("demand constraints met")
+    print(distMatrix)
+    putToCsv(distMatrix,'lengthOfPathsTaken')
     return
 
 def getCost(activeArr, allpairsdjik,k,demand,dist): #calculate the total cost using the demands and fixed costs, returns a value
@@ -89,6 +98,7 @@ def getCost(activeArr, allpairsdjik,k,demand,dist): #calculate the total cost us
             cost += costArr[a][b]
     print("cost array: ")
     print(costArr)
+    putToCsv(costArr,'costOfArcs')
     print("total cost for k =",k)
     print(cost)
 
